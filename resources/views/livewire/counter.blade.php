@@ -23,7 +23,25 @@
                 <input type="text" wire:model.lazy="name" > <br/>
                 <span>{{$name}}</span>
             </div>
+
+            <section>
+{{--                NOTE wire loading 사용법 . target은 evnet 또는 model 에서 사용가능--}}
+                <div wire:loading wire:target="image">
+                    loading...
+                </div>
+                @if($image)
+                    <img src={{$image->temporaryUrl()}}  width="200px" height="200px" >
+                @endif
+                <input type="file" wire:model="image"  wire:loading.attr="disabled" id="image" >
+                @error('image')
+                    <div>
+                        <span>{{$message}}</span>
+                    </div>
+                @enderror
+            </section>
+
             <form class="flex my-4" wire:submit.prevent="addComment">
+
                 <label for="new comment"></label>
                 <input wire:model="newComment"  type="text" name="" id="new comment" placeholder="new comment here..." >
                 {{$newComment}}
@@ -39,7 +57,8 @@
             <div class="card bordered">
                 <figure>
                     @if($comment->image)
-                    <img src="{{$comment->image}}">
+{{--                        storage/public/ image Name --}}
+                    <img  class="max-w-6xl" src="{{$comment->image_path}}">
                     @endif
                 </figure>
                 <div wire:click="$emit('deleteClicked',{{$comment->id}})" >Delete</div>
