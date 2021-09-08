@@ -1,16 +1,18 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+{{--<x-app-layout>--}}
+{{--    <x-slot name="header">--}}
+{{--        <h2 class="font-semibold text-xl text-gray-800 leading-tight">--}}
+{{--            {{ __('Dashboard') }}--}}
+{{--        </h2>--}}
+{{--    </x-slot>--}}
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <x-jet-welcome />
-            </div>
             <h1> Hello livewire</h1>
+            <div>
+                @if(session()->has('message'))
+                    <p>{{session('message')}}</p>
+                @endif
+            </div>
             <div>
                 <button wire:click="increment" >+</button>
                 <h1>{{$count}}</h1>
@@ -21,7 +23,18 @@
                 <input type="text" wire:model.lazy="name" > <br/>
                 <span>{{$name}}</span>
             </div>
-            <p>{{$comments}}</p>
+            <form class="flex my-4" wire:submit.prevent="addComment">
+                <label for="new comment"></label>
+                <input wire:model="newComment"  type="text" name="" id="new comment" placeholder="new comment here..." >
+                {{$newComment}}
+                @error($newComment)
+                <div>
+                    <span>{{$message}}</span>
+                </div>
+                @enderror
+                <button type="submit" >Add</button>
+            </form>
+
             @foreach($comments as $comment)
             <div class="card bordered">
                 <figure>
@@ -29,10 +42,13 @@
                     <img src="{{$comment->image}}">
                     @endif
                 </figure>
+                <div wire:click="$emit('deleteClicked',{{$comment->id}})" >Delete</div>
                 <div class="card-body">
                     <h2 class="card-title">Top image
                         <div class="badge mx-2 badge-secondary">NEW</div>
                     </h2>
+                    <h3>{{ $comment->writer->name }}</h3>
+                    <h3>{{ $comment->created_at->diffForHumans() }}</h3>
                     <p>{{$comment->content}}</p>
                     <div class="justify-end card-actions">
                         <button class="btn btn-secondary">More info</button>
@@ -40,9 +56,19 @@
                 </div>
             </div>
             @endforeach
+            {{$comments->links()}}
         </div>
 
     </div>
-</x-app-layout>
+
+    <script>
+        window.livewire.on('deleteClicked',(id)=>{
+            if(confirm(`Are you sure to delete? ${id}`)){
+                window.livewire.emit('delete',id);
+            }
+        })
+    </script>
+{{--</x-app-layout>--}}
+
 
 
