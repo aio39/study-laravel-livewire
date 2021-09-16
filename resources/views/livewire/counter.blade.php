@@ -62,6 +62,8 @@
                     @endif
                 </figure>
                 <div wire:click="$emit('deleteClicked',{{$comment->id}})" >Delete</div>
+                <div wire:click="$emit('deleteClicked',{{$comment->id}})" >edit</div>
+                <button wire:click="$emit('openModal', 'edit-comment',{{ json_encode(["comment" => $comment->id]) }})">Edit User</button>
                 <div class="card-body">
                     <h2 class="card-title">Top image
                         <div class="badge mx-2 badge-secondary">NEW</div>
@@ -84,6 +86,11 @@
         window.livewire.on('deleteClicked',(id)=>{
             if(confirm(`Are you sure to delete? ${id}`)){
                 window.livewire.emit('delete',id);
+            }
+        })
+        window.livewire.on('EditClicked',(id)=>{
+            if(confirm(`Are you sure to Edit? ${id}`)){
+                window.livewire.emit('edit',id);
             }
         })
     </script>
